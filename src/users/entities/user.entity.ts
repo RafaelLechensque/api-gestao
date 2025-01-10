@@ -1,29 +1,41 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { TypesUser } from '../types-users/entities/types-user.entity';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn("uuid")
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    // @ApiProperty({ example: 'Rafael' ,description:""})
-    @Column({ nullable: false })
-    name: string
+  // @ApiProperty({ example: 'Rafael' ,description:""})
+  @Column({ nullable: false })
+  name: string;
 
-    @Column({ nullable: false, unique: true })
-    email: string
+  @Column({ nullable: false, unique: true })
+  email: string;
 
-    @Column({ nullable: false })
-    password: string
+  @Column({ nullable: false })
+  password: string;
 
-    @Column({ nullable: false, default: true })
-    isEnabled: boolean
+  @Column({ nullable: false, unique: true })
+  cpf: string;
 
-    @CreateDateColumn()
-    createdDate: Date
+  @ManyToOne((t) => TypesUser, { onDelete: 'SET NULL', nullable: false })
+  typeUser: TypesUser;
 
-    @UpdateDateColumn()
-    updatedDate: Date
+  @Column({ nullable: false, default: true })
+  isEnabled: boolean;
 
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 }
