@@ -7,14 +7,17 @@ import { jwtConstants } from './constants';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TokenUsers } from './entities/token-users.entity';
 
 @Module({
   imports: [
     UsersModule,
+    TypeOrmModule.forFeature([TokenUsers]),
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '3d' },
+      signOptions: { expiresIn: '7d' },
     }),
   ],
   controllers: [AuthController],

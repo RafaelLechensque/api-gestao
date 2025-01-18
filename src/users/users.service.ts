@@ -2,7 +2,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
 import { cpf } from 'cpf-cnpj-validator';
@@ -20,7 +24,6 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     createUserDto.cpf = cpf.format(createUserDto.cpf);
-    console.log(createUserDto.cpf);
 
     if (!cpf.isValid(createUserDto.cpf)) {
       throw new BadRequestException('CPF Invalido');
@@ -76,8 +79,38 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) throw new BadRequestException('usuario nao encontrado');
+
+    user.cpf = updateUserDto.cpf ?? user.cpf;
+    user.email = updateUserDto.email ?? user.email;
+    user.isEnabled = updateUserDto.isEnabled ?? user.isEnabled;
+    user.name = updateUserDto.name ?? user.name;
+
+    if (updateUserDto.typeUserId) {
+      const typeUser = await this.typesUsersService.findOne(
+        updateUserDto.typeUserId,
+      );
+      if (!typeUser)
+        throw new BadRequestException('tipo de usuario nao encontrado');
+      user.typeUser = typeUser;
+    }
+
+    if (updateUserDto.password) {
+      const salt = await genSalt();
+      user.password = await hash(updateUserDto.password, salt);
+    }
+
+    // opcao dinamica
+    // Object.entries(updateUserDto).forEach(([key, value]) => {
+    //   if (value !== undefined) {
+    //     user[key] = value;
+    //   }
+    // });
+
+    const { password, ...rest } = await this.usersRepository.save(user);
+    return rest;
   }
 
   async remove(id: string) {

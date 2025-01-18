@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { AddUserInfo, CreateUserDto } from './create-user.dto';
 import { ApiProperty, IntersectionType } from '@nestjs/swagger';
+import { CreateUserDto, AddUserInfo } from './create-user.dto';
 
 export class UpdateUserDto extends IntersectionType(
-  CreateUserDto,
-  AddUserInfo,
+  PartialType(CreateUserDto),
+  PartialType(AddUserInfo),
 ) {}

@@ -6,12 +6,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import typeorm from './config/typeorm';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
