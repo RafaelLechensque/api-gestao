@@ -12,23 +12,25 @@ export class TypesUsersService {
     private TyperUsersRepository: Repository<TypesUser>,
   ) {}
 
-  create(createTypesUserDto: CreateTypesUserDto) {
-    return 'This action adds a new typesUser';
+  async create(createTypesUserDto: CreateTypesUserDto) {
+    const typer = await this.TyperUsersRepository.create(createTypesUserDto);
+
+    return await this.TyperUsersRepository.save(typer);
   }
 
-  findAll() {
-    return this.TyperUsersRepository.find();
+  async findAll() {
+    return await this.TyperUsersRepository.find();
   }
 
-  findOne(id: string) {
-    return this.TyperUsersRepository.findOneBy({ id });
+  async findOne(id: string) {
+    return await this.TyperUsersRepository.findOneBy({ id });
   }
 
-  update(id: number, updateTypesUserDto: UpdateTypesUserDto) {
-    return `This action updates a #${id} typesUser`;
+  async update(id: string, updateTypesUserDto: UpdateTypesUserDto) {
+    return await this.TyperUsersRepository.update(id, updateTypesUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} typesUser`;
+  async remove(id: string) {
+    return await this.TyperUsersRepository.delete({ id });
   }
 }

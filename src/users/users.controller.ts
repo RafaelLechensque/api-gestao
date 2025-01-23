@@ -44,7 +44,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Roles(Role.SuperAdmin)
+  @Roles(Role.SuperAdmin, Role.Admin, Role.Menager)
   @ApiResponse(responserPost[0])
   @ApiResponse(responserPost[1])
   @ApiBody({ type: CreateUserDto })
